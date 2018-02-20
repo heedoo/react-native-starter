@@ -1,6 +1,89 @@
 import React from 'react';
-import { Text, View, Button, TouchableHighlight,StyleSheet, Alert } from 'react-native';
+import { Text, View, Button, TouchableHighlight,StyleSheet, Alert,FlatList, ActivityIndicator} from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import {getUsers, getUsers2} from './homeService';
+import { ListItem } from 'react-native-elements';
+
+
+class Users extends React.Component {
+  state = {
+    seed: 1,
+    page: 1,
+    users: [],
+    isLoading: false,
+    isRefreshing: false,
+  };
+
+  componentDidMount() {
+    this.loadUsers();
+  };
+
+  loadUsers = () => {
+    const { users, seed, page } = this.state;
+    this.setState({ isLoading: true });
+
+    fetch(`https://randomuser.me/api/?seed=${seed}&page=${page}&results=20`)
+      .then(res => res.json())
+      .then(res => {
+        this.setState({
+          users: page === 1 ? res.results : [...users, ...res.results],
+          isRefreshing: false,
+        });
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  };
+
+  handleRefresh = () => {
+    this.setState({
+      seed: this.state.seed + 1,
+      isRefreshing: true,
+    }, () => {
+      this.loadUsers();
+    });
+  };
+
+  handleLoadMore = () => {
+    this.setState({
+      page: this.state.page + 1
+    }, () => {
+      this.loadUsers();
+    });
+  };
+
+
+
+  render() {
+    const { users, isRefreshing } = this.state;
+
+    return (
+      <View style={styles.scene}>
+        {
+          users &&
+            <FlatList
+              data={users}
+              renderItem={({item}) => (
+                <ListItem
+                  roundAvatar
+                  title={item.name.first}
+                  subtitle={item.email}
+                  avatar={{uri: item.picture.thumbnail}}
+                />
+              )}
+              keyExtractor={i => i.email}
+              refreshing={isRefreshing}
+              onRefresh={this.handleRefresh}
+              onEndReached={this.handleLoadMore}
+              onEndThreshold={0}
+            />
+        }
+      </View>
+    )
+  }
+}
+
+
 
 class DetailsScreen extends React.Component {
   render() {
@@ -21,7 +104,12 @@ class HomeScreen extends React.Component {
     };
   }
   componentDidMount() {
-		console.log("HomeScreen loaded");
+		console.log("HomeScreen loaded!");
+    getUsers2().then((res)=>{
+      console.log(JSON.stringify(res));
+    }, (err)=>{
+      console.log(err)
+    })
 	}
 
   _onPressButton = (val) => {
@@ -41,6 +129,10 @@ class HomeScreen extends React.Component {
           title="Go to Details"
           onPress={() => this.props.navigation.navigate('Details')}
         />
+        <FlatList
+         data={[{key: 'a'}, {key: 'b'}]}
+         renderItem={({item}) => <Text>{item.key}</Text>}
+         />
       </View>
     );
   }
@@ -49,12 +141,28 @@ class HomeScreen extends React.Component {
 
 export default StackNavigator({
   Home: { screen: HomeScreen },
-  Details: { screen: DetailsScreen }
+  Details: { screen: Users }
 },{
 
 });
 
 const styles = StyleSheet.create({
+  title: {
+    fontSize: 24,
+    margin: 20,
+  },
+  container: {
+    flex: 1,
+    paddingTop: 20,//Constants.statusBarHeight,
+    backgroundColor: '#eee',
+  },
+  loading: {
+    margin: 50,
+  },
+  fullApp: {
+    margin: 20,
+    textAlign: 'center',
+  },
   button: {
     width: 260,
     alignItems: 'center',
@@ -63,8 +171,23 @@ const styles = StyleSheet.create({
   buttonText: {
     padding: 20,
     color: 'white'
+  },
+  scene: {
+    flex: 1,
+    paddingTop: 25,
+  },
+  user: {
+    width: '100%',
+    backgroundColor: '#333',
+    marginBottom: 10,
+    paddingLeft: 25,
+  },
+  userName: {
+    fontSize: 17,
+    paddingVertical: 20,
+    color: '#fff'
   }
-})
+});
 
 // const HomeStack = () => {
 // 	return StackNavigator(

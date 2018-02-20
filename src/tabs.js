@@ -2,6 +2,7 @@ import React from 'react';
 import {Alert, Platform, StyleSheet, Text, View, Button, TouchableHighlight } from 'react-native';
 import { TabNavigator, TabBarBottom, StackNavigator } from 'react-navigation';
 import HomeStack from './home/home'
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 class DetailsScreen extends React.Component {
   render() {
@@ -42,7 +43,7 @@ export default TabNavigator(
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
         let iconName;
-        if (routeName === 'Home') {
+        if (routeName === 'Tab1') {
           iconName = `ios-information-circle${focused ? '' : '-outline'}`;
         } else if (routeName === 'Settings') {
           iconName = `ios-options${focused ? '' : '-outline'}`;
@@ -50,7 +51,8 @@ export default TabNavigator(
 
         // You can return any component that you like here! We usually use an
         // icon component from react-native-vector-icons
-        return <Text name={iconName} size={25} color={tintColor} />;
+        return <Ionicons name={iconName} size={25} color={tintColor} />;
+        //return <Text name={iconName} size={25} color={tintColor} />;
       },
     }),
     tabBarOptions: {

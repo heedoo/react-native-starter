@@ -5,9 +5,8 @@ import {httpCall} from '../shared/restApi';
  * @param -
  */
 var getUsers = (_params) => {
-//exports.getUsers = (_params) => {
   var params = {
-    url: "https://randomuser.me/api/?page=" + 1 + "&results=20",
+    url: "https://randomuser.me/api/?page=" + _params.page == undefined ? 1 : _params.page + "&results=" + _params.results==undefined ? 20 : _params.results,
     httpObj: {
       method: 'GET',
       headers: {
@@ -16,15 +15,11 @@ var getUsers = (_params) => {
       },
       //body:JSON.stringify({page: _params && _params.page ? _params.page : 1})
     }
-
-
   }
-
   return httpCall(params);
 };
 
 var getUsers2 = (_params) => {
-//exports.getUsers = (_params) => {
   var params = {
     url: "https://randomuser.me/api/?page=" + 1 + "&results=20",
     httpObj: {
@@ -35,10 +30,7 @@ var getUsers2 = (_params) => {
       },
       //body:JSON.stringify({page: _params && _params.page ? _params.page : 1})
     }
-
-
   }
-
   return httpCall(params);
 };
 

@@ -18,3 +18,19 @@ var httpCall = (_params) => {
 }
 
 export { httpCall };
+
+/*
+module.exports = {
+  httpCall : async (_params) => {
+    console.log("_params: ", _params)
+    try {
+      let response = await fetch(_params.url, _params.httpObj);
+      let responseJson = await response.json();
+      return responseJson;
+    } catch (error) {
+      throw Error(error);
+    }
+  }
+
+}
+*/
